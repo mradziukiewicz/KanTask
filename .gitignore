@@ -1,0 +1,13 @@
+# Ignorowanie środowiska wirtualnego
+venv/
+
+# Ignorowanie plików tymczasowych
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignorowanie pliku bazy danych SQLite (jeśli używasz)
+db.sqlite3
+
+# Ignorowanie logów
+*.log
