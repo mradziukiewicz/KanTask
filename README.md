@@ -2,7 +2,7 @@ KanTask
 
 #Jak uruchomic projekt?
 
-git clone <URL_REPOZYTORIUM>
+git clone https://github.com/mradziukiewicz/KanTask
 cd KanTask
 python -m venv venv
 venv\Scripts\activate
