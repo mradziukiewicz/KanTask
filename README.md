@@ -1,14 +1,13 @@
 KanTask
 
-#Jak uruchomic projekt?
+# Jak uruchomić projekt?
 
-git clone https://github.com/mradziukiewicz/KanTask
-cd KanTask
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+git clone https://github.com/mradziukiewicz/KanTask  
+cd KanTask  
+python -m venv venv  
+venv\Scripts\activate  
+pip install -r requirements.txt  
+python manage.py migrate  
+python manage.py runserver  
 
-
-#Dodatkowo wymagane połączenie do bazy danych 31.183.16.15, zaptaj o dostep jesli nie masz ;)
+# Dodatkowo wymagane połączenie do bazy danych 31.183.16.15, zapytaj o dostęp jeśli nie masz ;)
