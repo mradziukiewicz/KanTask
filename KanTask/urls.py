@@ -21,6 +21,6 @@ from django.urls import path
 from authentication import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls), #default admin page
-    path('', views.login)
+    path('admin/', admin.site.urls),  # default admin page
+    path('login/', views.login_view, name='login'),  # poprawione odwołanie do login_view
 ]
