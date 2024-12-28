@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'KanTask.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DjangoDB',
-        'USER': 'admin',
-        'PASSWORD': 'KanTask123!',
-        'HOST': '31.183.16.15',
+        'NAME': 'djangodb',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }

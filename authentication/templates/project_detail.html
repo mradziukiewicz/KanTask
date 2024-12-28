@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ project.name }}</title>
+    <style>
+        .kanban-board {
+            display: flex;
+            justify-content: space-around;
+        }
+        .kanban-column {
+            width: 30%;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .kanban-column h2 {
+            text-align: center;
+        }
+        .kanban-card {
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ project.name }}</h1>
+    <p>{{ project.description }}</p>
+
+    <div class="kanban-board">
+        <div class="kanban-column">
+            <h2>To Do</h2>
+            {% for task in tasks %}
+                {% if task.status == 'Pending' %}
+                    <div class="kanban-card">
+                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
+                        <a href="{% url 'update_task_status' task.id 'In Progress' %}">Move to In Progress</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="kanban-column">
+            <h2>In Progress</h2>
+            {% for task in tasks %}
+                {% if task.status == 'In Progress' %}
+                    <div class="kanban-card">
+                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
+                        <a href="{% url 'update_task_status' task.id 'Completed' %}">Move to Completed</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="kanban-column">
+            <h2>Completed</h2>
+            {% for task in tasks %}
+                {% if task.status == 'Completed' %}
+                    <div class="kanban-card">
+                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

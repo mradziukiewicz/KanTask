@@ -23,4 +23,10 @@ from authentication import views
 urlpatterns = [
     path('admin/', admin.site.urls),  # default admin page
     path('login/', views.login_view, name='login'),  # poprawione odwołanie do login_view
+    path('projects/', views.project_list, name='project_list'),
+    path('projects/<int:project_id>/', views.project_detail, name='project_detail'),
+    path('tasks/<int:task_id>/', views.task_detail, name='task_detail'),
+    path('kanban/', views.kanban_board, name='kanban_board'),
+    path('update_task_status/<int:task_id>/<str:status>/', views.update_task_status, name='update_task_status'),
+
 ]

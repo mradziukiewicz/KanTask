@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ task.subject }}</title>
+    <style>
+        .kanban-board {
+            display: flex;
+            justify-content: space-around;
+        }
+        .kanban-column {
+            width: 30%;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .kanban-column h2 {
+            text-align: center;
+        }
+        .kanban-card {
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .subtask {
+            margin-left: 20px;
+            font-style: italic;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ task.subject }}</h1>
+    <p>{{ task.description }}</p>
+    <p>Status: {{ task.status }}</p>
+    <p>Priority: {{ task.priority }}</p>
+    <p>Due Date: {{ task.due_date }}</p>
+    <p>Work Time: {{ duration }}</p>
+
+    <div class="kanban-board">
+        <div class="kanban-column">
+            <h2>To Do</h2>
+            {% for subtask in subtasks %}
+                {% if subtask.status == 'Pending' %}
+                    <div class="kanban-card subtask">
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <a href="{% url 'update_task_status' subtask.id 'In Progress' %}">Move to In Progress</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="kanban-column">
+            <h2>In Progress</h2>
+            {% for subtask in subtasks %}
+                {% if subtask.status == 'In Progress' %}
+                    <div class="kanban-card subtask">
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <a href="{% url 'update_task_status' subtask.id 'Completed' %}">Move to Completed</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="kanban-column">
+            <h2>Completed</h2>
+            {% for subtask in subtasks %}
+                {% if subtask.status == 'Completed' %}
+                    <div class="kanban-card subtask">
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <h2>Comments</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Comment</button>
+    </form>
+    <table>
+        <tr>
+            <th>Author</th>
+            <th>Date</th>
+            <th>Content</th>
+        </tr>
+        {% for comment in comments %}
+        <tr>
+            <td>{{ comment.author }}</td>
+            <td>{{ comment.created_at }}</td>
+            <td>{{ comment.content }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
