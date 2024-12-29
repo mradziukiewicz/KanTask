@@ -28,6 +28,12 @@
             font-style: italic;
             color: gray;
         }
+        .status-buttons {
+            margin-top: 20px;
+        }
+        .status-buttons button {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -35,9 +41,30 @@
     <p>{{ task.description }}</p>
     <p>Status: {{ task.status }}</p>
     <p>Priority: {{ task.priority }}</p>
-    <p>Due Date: {{ task.due_date }}</p>
-    <p>Work Time: {{ duration }}</p>
+    <p>Assigned User: {{ task.assigned_user.username }}</p>
+    <p>SLA Deadline: {{ task.sla_deadline }}</p>
+    {% if task.resolved_after_deadline %}
+        <p style="color: red;">This task was resolved after the SLA deadline.</p>
+    {% endif %}
 
+    {% if not subtasks %}
+    <div class="status-buttons">
+        <form method="post" action="{% url 'update_task_status' task.id 'Pending' %}">
+            {% csrf_token %}
+            <button type="submit">To Do</button>
+        </form>
+        <form method="post" action="{% url 'update_task_status' task.id 'In Progress' %}">
+            {% csrf_token %}
+            <button type="submit">In Progress</button>
+        </form>
+        <form method="post" action="{% url 'update_task_status' task.id 'Completed' %}">
+            {% csrf_token %}
+            <button type="submit">Done</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if subtasks %}
     <div class="kanban-board">
         <div class="kanban-column">
             <h2>To Do</h2>
@@ -45,6 +72,7 @@
                 {% if subtask.status == 'Pending' %}
                     <div class="kanban-card subtask">
                         <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                         <a href="{% url 'update_task_status' subtask.id 'In Progress' %}">Move to In Progress</a>
                     </div>
                 {% endif %}
@@ -56,6 +84,7 @@
                 {% if subtask.status == 'In Progress' %}
                     <div class="kanban-card subtask">
                         <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                         <a href="{% url 'update_task_status' subtask.id 'Completed' %}">Move to Completed</a>
                     </div>
                 {% endif %}
@@ -67,11 +96,13 @@
                 {% if subtask.status == 'Completed' %}
                     <div class="kanban-card subtask">
                         <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                     </div>
                 {% endif %}
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
     <h2>Comments</h2>
     <form method="post">
@@ -93,5 +124,20 @@
         </tr>
         {% endfor %}
     </table>
+
+    {% if task.status == 'Completed' %}
+        <h2>Solution</h2>
+        <p>{{ task.solution }}</p>
+    {% endif %}
+
+    {% if not subtasks %}
+    <div class="status-buttons">
+        <form method="post" action="{% url 'update_task_status' task.id 'Completed' %}">
+            {% csrf_token %}
+            <textarea name="solution" placeholder="Enter solution here..."></textarea>
+            <button type="submit">Done</button>
+        </form>
+    </div>
+    {% endif %}
 </body>
 </html>

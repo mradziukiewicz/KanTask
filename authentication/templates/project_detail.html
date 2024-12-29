@@ -23,11 +23,18 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        .subtask {
+            margin-left: 20px;
+            font-style: italic;
+            color: gray;
+        }
     </style>
 </head>
 <body>
     <h1>{{ project.name }}</h1>
     <p>{{ project.description }}</p>
+    <p>Owner: {{ project.owner.username }}</p>
+    <p>Customer: {{ project.customer.username }}</p>
 
     <div class="kanban-board">
         <div class="kanban-column">
@@ -36,7 +43,7 @@
                 {% if task.status == 'Pending' %}
                     <div class="kanban-card">
                         <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
-                        <a href="{% url 'update_task_status' task.id 'In Progress' %}">Move to In Progress</a>
+                        <p>Assigned User: {{ task.assigned_user.username }}</p>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -47,7 +54,7 @@
                 {% if task.status == 'In Progress' %}
                     <div class="kanban-card">
                         <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
-                        <a href="{% url 'update_task_status' task.id 'Completed' %}">Move to Completed</a>
+                        <p>Assigned User: {{ task.assigned_user.username }}</p>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -58,6 +65,7 @@
                 {% if task.status == 'Completed' %}
                     <div class="kanban-card">
                         <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
+                        <p>Assigned User: {{ task.assigned_user.username }}</p>
                     </div>
                 {% endif %}
             {% endfor %}
