@@ -5,6 +5,7 @@ from .models import Project, Task
 from .forms import CommentForm
 from django.utils import timezone
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib import messages
 
 def is_customer(user):
     return user.is_customer()
@@ -48,7 +49,9 @@ def login_view(request):
 # authentication/views.py
 
 def project_list(request):
-    if request.user.is_manager():
+    if request.user.is_superuser:
+        projects = Project.objects.all()
+    elif request.user.is_manager():
         projects = Project.objects.filter(owner=request.user)
     elif request.user.is_customer():
         projects = Project.objects.filter(customer=request.user)
@@ -61,7 +64,7 @@ def project_list(request):
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
-    if request.user != project.owner and request.user != project.customer and not project.tasks.filter(assigned_user=request.user).exists():
+    if not request.user.is_superuser and request.user != project.owner and request.user != project.customer and not project.tasks.filter(assigned_user=request.user).exists():
         return redirect('project_list')
 
     tasks = Task.objects.filter(project=project, parent_task__isnull=True)
@@ -77,7 +80,7 @@ def project_detail(request, project_id):
 
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user != task.assigned_user and request.user != task.project.owner and request.user != task.project.customer:
+    if not request.user.is_superuser and request.user != task.assigned_user and request.user != task.project.owner and request.user != task.project.customer:
         return redirect('project_detail', project_id=task.project.id)
 
     subtasks = task.subtasks.all().distinct()  # Ensure unique subtasks
@@ -116,6 +119,11 @@ def kanban_board(request):
 
 def update_task_status(request, task_id, status):
     task = get_object_or_404(Task, id=task_id)
+
+    # Prevent customers from changing the task status
+    if request.user.is_customer():
+        messages.error(request, 'Customers are not allowed to change the task status.')
+        return redirect('task_detail', task_id=task.id)
 
     if request.method == 'POST':
         solution = request.POST.get('solution', '')
