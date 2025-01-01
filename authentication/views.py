@@ -6,6 +6,7 @@ from .forms import CommentForm
 from django.utils import timezone
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
+from django.db.models import Q
 
 def is_customer(user):
     return user.is_customer()
@@ -68,13 +69,23 @@ def project_detail(request, project_id):
         return redirect('project_list')
 
     tasks = Task.objects.filter(project=project, parent_task__isnull=True)
+    subtasks = Task.objects.filter(project=project, parent_task__isnull=False)
     total_tasks = tasks.count()
     completed_tasks = tasks.filter(status='Completed').count()
     completion_rate = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
+    search_query = request.GET.get('search', '')
 
+    if search_query:
+        tasks = tasks.filter(
+            Q(subject__icontains=search_query) | Q(id__icontains=search_query)
+        )
+        subtasks = subtasks.filter(
+            Q(subject__icontains=search_query) | Q(id__icontains=search_query)
+        )
     return render(request, 'project_detail.html', {
         'project': project,
         'tasks': tasks,
+        'subtasks': subtasks,
         'completion_rate': completion_rate,
     })
 

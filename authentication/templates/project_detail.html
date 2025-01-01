@@ -37,14 +37,27 @@
     <p>Customer: {{ project.customer.username }}</p>
     <p>Completion Rate: {{ completion_rate }}%</p>
 
+    <form method="get" action="{% url 'project_detail' project.id %}">
+        <input type="text" name="search" placeholder="Search tasks by ID or name" value="{{ request.GET.search }}">
+        <button type="submit">Search</button>
+    </form>
+
     <div class="kanban-board">
         <div class="kanban-column">
             <h2>To Do</h2>
             {% for task in tasks %}
                 {% if task.status == 'Pending' %}
                     <div class="kanban-card">
-                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
+                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a> (ID: {{ task.id }})</p>
                         <p>Assigned User: {{ task.assigned_user.username }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% for subtask in subtasks %}
+                {% if subtask.status == 'Pending' %}
+                    <div class="kanban-card subtask">
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -54,8 +67,16 @@
             {% for task in tasks %}
                 {% if task.status == 'In Progress' %}
                     <div class="kanban-card">
-                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
+                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a> (ID: {{ task.id }})</p>
                         <p>Assigned User: {{ task.assigned_user.username }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% for subtask in subtasks %}
+                {% if subtask.status == 'In Progress' %}
+                    <div class="kanban-card subtask">
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -65,8 +86,16 @@
             {% for task in tasks %}
                 {% if task.status == 'Completed' %}
                     <div class="kanban-card">
-                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a></p>
+                        <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a> (ID: {{ task.id }})</p>
                         <p>Assigned User: {{ task.assigned_user.username }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% for subtask in subtasks %}
+                {% if subtask.status == 'Completed' %}
+                    <div class="kanban-card subtask">
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                     </div>
                 {% endif %}
             {% endfor %}

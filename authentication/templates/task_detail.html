@@ -38,6 +38,7 @@
 </head>
 <body>
     <h1>{{ task.subject }}</h1>
+    <p>Task ID: {{ task.id }}</p>
     <p>{{ task.description }}</p>
     <p>Status: {{ task.status }}</p>
     <p>Priority: {{ task.priority }}</p>
@@ -71,7 +72,7 @@
             {% for subtask in subtasks %}
                 {% if subtask.status == 'Pending' %}
                     <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
                         <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                         <a href="{% url 'update_task_status' subtask.id 'In Progress' %}">Move to In Progress</a>
                     </div>
@@ -83,7 +84,7 @@
             {% for subtask in subtasks %}
                 {% if subtask.status == 'In Progress' %}
                     <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
                         <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                         <a href="{% url 'update_task_status' subtask.id 'Completed' %}">Move to Completed</a>
                     </div>
@@ -95,7 +96,7 @@
             {% for subtask in subtasks %}
                 {% if subtask.status == 'Completed' %}
                     <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a></p>
+                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
                         <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                     </div>
                 {% endif %}
@@ -105,12 +106,12 @@
     {% endif %}
 
     {% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
     <h2>Comments</h2>
     <form method="post">
