@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from django.contrib.auth import views as auth_views
+from authentication.views import home
 #import all apps here
 from authentication import views
 
@@ -32,5 +33,10 @@ urlpatterns = [
     path('projects/<int:project_id>/edit_task/<int:task_id>/', views.edit_task, name='edit_task'),
     path('kanban/', views.kanban_board, name='kanban_board'),
     path('update_task_status/<int:task_id>/<str:status>/', views.update_task_status, name='update_task_status'),
+
+    path('', home, name='home'),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
 
 ]

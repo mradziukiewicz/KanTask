@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 def is_superuser_or_owner(user, project):
     return user.is_superuser or user == project.owner
@@ -260,3 +261,17 @@ def edit_task(request, project_id, task_id):
         form = TaskForm(instance=task, project=project)
 
     return render(request, 'edit_task.html', {'form': form, 'project': project, 'task': task})
+
+
+@login_required
+def home(request):
+    projects = Project.objects.all()
+    tasks = Task.objects.filter(sla_deadline__lte=timezone.now())
+    comments = Comment.objects.order_by('-created_at')[:5]
+
+    context = {
+        'projects': projects,
+        'tasks': tasks,
+        'comments': comments,
+    }
+    return render(request, 'home.html', context)
