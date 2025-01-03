@@ -1,0 +1,17 @@
+<!-- authentication/templates/edit_task.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Task in {{ project.name }}</title>
+</head>
+<body>
+    <h1>Edit Task in {{ project.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+    <a href="{% url 'project_detail' project.id %}">Cancel</a>
+</body>
+</html>

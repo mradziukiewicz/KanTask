@@ -25,7 +25,11 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),  # poprawione odwołanie do login_view
     path('projects/', views.project_list, name='project_list'),
     path('projects/<int:project_id>/', views.project_detail, name='project_detail'),
+    path('projects/<int:project_id>/add_task/', views.add_task, name='add_task'),
+    path('projects/<int:project_id>/add_task/<int:parent_task_id>/', views.add_task, name='add_subtask'),
     path('tasks/<int:task_id>/', views.task_detail, name='task_detail'),
+    path('projects/<int:project_id>/delete_task/<int:task_id>/', views.delete_task, name='delete_task'),
+    path('projects/<int:project_id>/edit_task/<int:task_id>/', views.edit_task, name='edit_task'),
     path('kanban/', views.kanban_board, name='kanban_board'),
     path('update_task_status/<int:task_id>/<str:status>/', views.update_task_status, name='update_task_status'),
 

@@ -1,7 +1,6 @@
-# forms.py
 from django import forms
 from .models import Comment, Task, User, Project
-from datetime import timedelta
+
 
 
 class CommentForm(forms.ModelForm):
@@ -23,3 +22,18 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = '__all__'
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['subject', 'description', 'priority', 'assigned_user', 'sla_deadline', 'status', 'parent_task']
+        widgets = {
+            'sla_deadline': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop('project', None)
+        super(TaskForm, self).__init__(*args, **kwargs)
+        if project:
+            self.fields['parent_task'].queryset = Task.objects.filter(project=project, parent_task__isnull=True)
+        self.fields['assigned_user'].queryset = User.objects.filter(groups__name='Engineer')

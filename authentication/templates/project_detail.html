@@ -28,6 +28,14 @@
             font-style: italic;
             color: gray;
         }
+        .subtask-of-subtask {
+            margin-left: 40px;
+            font-style: italic;
+            color: darkgray;
+        }
+        .priority-low { color: green; }
+        .priority-medium { color: orange; }
+        .priority-high { color: red; }
     </style>
 </head>
 <body>
@@ -36,6 +44,8 @@
     <p>Owner: {{ project.owner.username }}</p>
     <p>Customer: {{ project.customer.username }}</p>
     <p>Completion Rate: {{ completion_rate }}%</p>
+
+    <button onclick="window.history.back()">Go Back</button>
 
     <form method="get" action="{% url 'project_detail' project.id %}">
         <input type="text" name="search" placeholder="Search tasks by ID or name" value="{{ request.GET.search }}">
@@ -50,14 +60,25 @@
                     <div class="kanban-card">
                         <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a> (ID: {{ task.id }})</p>
                         <p>Assigned User: {{ task.assigned_user.username }}</p>
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% for subtask in subtasks %}
-                {% if subtask.status == 'Pending' %}
-                    <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
-                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                        <p class="priority-{{ task.priority|lower }}">Priority: {{ task.priority }}</p>
+                        {% for subtask in task.subtasks.all %}
+                            <div class="subtask">
+                                <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                                <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                                {% for subsubtask in subtask.subtasks.all %}
+                                    <div class="subtask-of-subtask">
+                                        <p><a href="{% url 'task_detail' subsubtask.id %}">{{ subsubtask.subject }}</a> (ID: {{ subsubtask.id }})</p>
+                                        <p>Assigned User: {{ subsubtask.assigned_user.username }}</p>
+                                        <p><a href="{% url 'edit_task' project.id subsubtask.id %}">Edit Subtask of Subtask</a></p>
+                                        <p><a href="{% url 'delete_task' project.id subsubtask.id %}">Delete Subtask of Subtask</a></p>
+                                    </div>
+                                {% endfor %}
+                                <p><a href="{% url 'edit_task' project.id subtask.id %}">Edit Subtask</a></p>
+                                <p><a href="{% url 'delete_task' project.id subtask.id %}">Delete Subtask</a></p>
+                            </div>
+                        {% endfor %}
+                        <p><a href="{% url 'edit_task' project.id task.id %}">Edit Task</a></p>
+                        <p><a href="{% url 'delete_task' project.id task.id %}">Delete Task</a></p>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -69,14 +90,25 @@
                     <div class="kanban-card">
                         <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a> (ID: {{ task.id }})</p>
                         <p>Assigned User: {{ task.assigned_user.username }}</p>
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% for subtask in subtasks %}
-                {% if subtask.status == 'In Progress' %}
-                    <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
-                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                        <p class="priority-{{ task.priority|lower }}">Priority: {{ task.priority }}</p>
+                        {% for subtask in task.subtasks.all %}
+                            <div class="subtask">
+                                <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                                <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                                {% for subsubtask in subtask.subtasks.all %}
+                                    <div class="subtask-of-subtask">
+                                        <p><a href="{% url 'task_detail' subsubtask.id %}">{{ subsubtask.subject }}</a> (ID: {{ subsubtask.id }})</p>
+                                        <p>Assigned User: {{ subsubtask.assigned_user.username }}</p>
+                                        <p><a href="{% url 'edit_task' project.id subsubtask.id %}">Edit Subtask of Subtask</a></p>
+                                        <p><a href="{% url 'delete_task' project.id subsubtask.id %}">Delete Subtask of Subtask</a></p>
+                                    </div>
+                                {% endfor %}
+                                <p><a href="{% url 'edit_task' project.id subtask.id %}">Edit Subtask</a></p>
+                                <p><a href="{% url 'delete_task' project.id subtask.id %}">Delete Subtask</a></p>
+                            </div>
+                        {% endfor %}
+                        <p><a href="{% url 'edit_task' project.id task.id %}">Edit Task</a></p>
+                        <p><a href="{% url 'delete_task' project.id task.id %}">Delete Task</a></p>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -88,18 +120,33 @@
                     <div class="kanban-card">
                         <p><a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a> (ID: {{ task.id }})</p>
                         <p>Assigned User: {{ task.assigned_user.username }}</p>
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% for subtask in subtasks %}
-                {% if subtask.status == 'Completed' %}
-                    <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
-                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                        <p class="priority-{{ task.priority|lower }}">Priority: {{ task.priority }}</p>
+                        {% for subtask in task.subtasks.all %}
+                            <div class="subtask">
+                                <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                                <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                                {% for subsubtask in subtask.subtasks.all %}
+                                    <div class="subtask-of-subtask">
+                                        <p><a href="{% url 'task_detail' subsubtask.id %}">{{ subsubtask.subject }}</a> (ID: {{ subsubtask.id }})</p>
+                                        <p>Assigned User: {{ subsubtask.assigned_user.username }}</p>
+                                        <p><a href="{% url 'edit_task' project.id subsubtask.id %}">Edit Subtask of Subtask</a></p>
+                                        <p><a href="{% url 'delete_task' project.id subsubtask.id %}">Delete Subtask of Subtask</a></p>
+                                    </div>
+                                {% endfor %}
+                                <p><a href="{% url 'edit_task' project.id subtask.id %}">Edit Subtask</a></p>
+                                <p><a href="{% url 'delete_task' project.id subtask.id %}">Delete Subtask</a></p>
+                            </div>
+                        {% endfor %}
+                        <p><a href="{% url 'edit_task' project.id task.id %}">Edit Task</a></p>
+                        <p><a href="{% url 'delete_task' project.id task.id %}">Delete Task</a></p>
                     </div>
                 {% endif %}
             {% endfor %}
         </div>
     </div>
+
+    {% if request.user.is_superuser or request.user == project.owner %}
+        <h2><a href="{% url 'add_task' project.id %}">Add New Task</a></h2>
+    {% endif %}
 </body>
 </html>

@@ -71,6 +71,7 @@ class Task(models.Model):
     sla_deadline = models.DateTimeField(null=True, blank=True)
     resolved_after_deadline = models.BooleanField(default=False)
     solution = models.TextField(null=True, blank=True)
+    time_spent = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.assigned_user and not self.assigned_user.groups.filter(name='engineer').exists():
