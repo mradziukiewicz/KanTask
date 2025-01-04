@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.http import JsonResponse
@@ -178,8 +179,12 @@ def update_task_status(request, task_id, status):
             task.status = 'Pending'
 
     # Check if the task is completed after the SLA deadline
-    if status == 'Completed' and timezone.now() > task.sla_deadline:
-        task.resolved_after_deadline = True
+    if status == 'Completed':
+        sla_deadline_datetime = datetime.combine(task.sla_deadline, datetime.min.time())
+        if timezone.is_naive(sla_deadline_datetime):
+            sla_deadline_datetime = timezone.make_aware(sla_deadline_datetime, timezone.get_current_timezone())
+        if timezone.now() > sla_deadline_datetime:
+            task.resolved_after_deadline = True
 
     task.save()
 

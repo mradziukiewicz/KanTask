@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
@@ -76,8 +78,12 @@ class Task(models.Model):
     def save(self, *args, **kwargs):
         if self.assigned_user and not self.assigned_user.groups.filter(name='engineer').exists():
             raise ValueError("The assigned user must be an engineer.")
-        if self.status == 'Completed' and self.sla_deadline and timezone.now() > self.sla_deadline:
-            self.resolved_after_deadline = True
+        if self.status == 'Completed' and self.sla_deadline:
+            sla_deadline_datetime = datetime.combine(self.sla_deadline, datetime.min.time())
+            if timezone.is_naive(sla_deadline_datetime):
+                sla_deadline_datetime = timezone.make_aware(sla_deadline_datetime, timezone.get_current_timezone())
+            if timezone.now() > sla_deadline_datetime:
+                self.resolved_after_deadline = True
         super().save(*args, **kwargs)
 
     def __str__(self):
