@@ -151,7 +151,7 @@
     <h1>{{ task.subject }}</h1>
     <p style="text-align: center;">Task ID: {{ task.id }}</p>
     <p style="text-align: center;">{{ task.description }}</p>
-    <p style="text-align: center;">Status: {{ task.status }}</p>
+    <p style="text-align: center;">Status: {% if task.status == 'Pending' %}To Do{% else %}{{ task.status }}{% endif %}</p>
     <p style="text-align: center;" class="priority-{{ task.priority|lower }}">Priority: {{ task.priority }}</p>
     <p style="text-align: center;">Assigned User: {{ task.assigned_user.username }}</p>
     <p style="text-align: center;">SLA Deadline: {{ task.sla_deadline }}</p>
@@ -173,7 +173,6 @@
                             <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
                             <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                             <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
-                            <a href="{% url 'update_task_status' subtask.id 'In Progress' %}" style="color: #007bff;">Move to In Progress</a>
                         </div>
                     {% endif %}
                 {% endfor %}
@@ -186,7 +185,6 @@
                             <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
                             <p>Assigned User: {{ subtask.assigned_user.username }}</p>
                             <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
-                            <a href="{% url 'update_task_status' subtask.id 'Completed' %}" style="color: #007bff;">Move to Completed</a>
                         </div>
                     {% endif %}
                 {% endfor %}
