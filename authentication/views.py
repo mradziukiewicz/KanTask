@@ -266,12 +266,10 @@ def edit_task(request, project_id, task_id):
 @login_required
 def home(request):
     projects = Project.objects.all()
-    tasks = Task.objects.filter(sla_deadline__lte=timezone.now())
     comments = Comment.objects.order_by('-created_at')[:5]
 
     context = {
         'projects': projects,
-        'tasks': tasks,
         'comments': comments,
     }
     return render(request, 'home.html', context)

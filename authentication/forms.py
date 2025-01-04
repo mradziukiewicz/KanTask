@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
+
 from .models import Comment, Task, User, Project
 
 
@@ -16,12 +18,13 @@ class ProjectAdminForm(forms.ModelForm):
         model = Project
         fields = '__all__'
 
-class TaskForm(forms.ModelForm):
-    assigned_user = forms.ModelChoiceField(queryset=User.objects.filter(groups__name='engineer'), required=True)
-
+class TaskAdminForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = '__all__'
+        fields = ['subject', 'description', 'priority', 'assigned_user', 'sla_deadline', 'status', 'parent_task']
+        widgets = {
+            'sla_deadline': AdminDateWidget(),
+        }
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -35,5 +38,5 @@ class TaskForm(forms.ModelForm):
         project = kwargs.pop('project', None)
         super(TaskForm, self).__init__(*args, **kwargs)
         if project:
-            self.fields['parent_task'].queryset = Task.objects.filter(project=project, parent_task__isnull=True)
+            self.fields['parent_task'].queryset = Task.objects.filter(project=project)
         self.fields['assigned_user'].queryset = User.objects.filter(groups__name='Engineer')

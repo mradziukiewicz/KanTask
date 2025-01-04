@@ -22,16 +22,7 @@
         {% endfor %}
     </ul>
 
-    <h2>Tasks with SLA Ending or Expired</h2>
-    <ul>
-        {% for task in tasks %}
-            <li>
-                <a href="{% url 'task_detail' task.id %}">{{ task.subject }}</a> -
-                <span class="priority-{{ task.priority|lower }}">Priority: {{ task.priority }}</span> -
-                SLA Deadline: {{ task.sla_deadline }}
-            </li>
-        {% endfor %}
-    </ul>
+
 
     <h2>Last Comments</h2>
     <ul>

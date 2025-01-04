@@ -68,7 +68,7 @@ class Task(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
     completion_percentage = models.FloatField(default=0.0)
     parent_task = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='subtasks')
-    sla_deadline = models.DateTimeField(null=True, blank=True)
+    sla_deadline = models.DateField(null=True, blank=True)
     resolved_after_deadline = models.BooleanField(default=False)
     solution = models.TextField(null=True, blank=True)
     time_spent = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)

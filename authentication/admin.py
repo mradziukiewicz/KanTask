@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .forms import TaskForm, ProjectAdminForm
+from .forms import TaskAdminForm, ProjectAdminForm
 from .models import User, Project, Task, Comment
 
 
@@ -46,10 +46,11 @@ class ProjectAdmin(admin.ModelAdmin):
     list_filter = ('owner', 'customer')
 
 class TaskAdmin(admin.ModelAdmin):
-    form = TaskForm
-    list_display = ['subject', 'status', 'priority', 'assigned_user', 'completion_percentage']
+    form = TaskAdminForm
+    list_display = ['subject', 'status', 'priority', 'assigned_user', 'completion_percentage', 'project']
     search_fields = ['subject', 'description']
-    list_filter = ['status', 'priority', 'assigned_user']
+    list_filter = ['status', 'priority', 'assigned_user', 'project']
+    fields = ['subject', 'description', 'priority', 'sla_deadline', 'project', 'parent_task', 'status', 'assigned_user', 'completion_percentage']
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('task', 'author', 'created_at')
