@@ -12,9 +12,14 @@
                 {{ incident.description }}<br>
                 Project: {{ incident.project.name }}<br>
                 Reported by: {{ incident.created_by.username }}<br>
-                Created at: {{ incident.created_at }}
+                Created at: {{ incident.created_at }}<br>
+                <form method="post" action="{% url 'delete_incident' incident.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
             </li>
         {% endfor %}
     </ul>
+<button onclick="window.history.back()">Go Back</button>
 </body>
 </html>

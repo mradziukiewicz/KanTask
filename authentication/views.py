@@ -292,3 +292,11 @@ def report_incident(request):
 def reported_errors(request):
     incidents = Incident.objects.all()
     return render(request, 'reported_errors.html', {'incidents': incidents})
+
+@user_passes_test(lambda u: u.is_superuser or u.is_manager())
+def delete_incident(request, incident_id):
+    incident = get_object_or_404(Incident, id=incident_id)
+    if request.method == 'POST':
+        incident.delete()
+        return redirect('reported_errors')
+    return render(request, 'delete_incident.html', {'incident': incident})

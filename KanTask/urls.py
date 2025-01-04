@@ -39,6 +39,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('report-incident/', views.report_incident, name='report_incident'),
     path('reported-errors/', views.reported_errors, name='reported_errors'),
+    path('delete-incident/<int:incident_id>/', views.delete_incident, name='delete_incident'),
 
 
 ]
