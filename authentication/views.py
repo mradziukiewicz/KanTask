@@ -101,7 +101,6 @@ def project_detail(request, project_id):
         'completion_rate': completion_rate,
     })
 
-# authentication/views.py
 
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -110,6 +109,7 @@ def task_detail(request, task_id):
 
     subtasks = task.subtasks.all().distinct()  # Ensure unique subtasks
     comments = task.comments.all()
+
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():

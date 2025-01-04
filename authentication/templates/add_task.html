@@ -10,6 +10,6 @@
         {{ form.as_p }}
         <button type="submit">Add Task</button>
     </form>
-    <button onclick="window.history.back()">Go Back</button>
+    <button onclick="window.location.href='{% url 'project_detail' project.id %}'">Go Back</button>
 </body>
 </html>

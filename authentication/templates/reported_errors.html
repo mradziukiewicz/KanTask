@@ -15,11 +15,12 @@
                 Created at: {{ incident.created_at }}<br>
                 <form method="post" action="{% url 'delete_incident' incident.id %}">
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.GET.next }}">
                     <button type="submit">Delete</button>
                 </form>
             </li>
         {% endfor %}
     </ul>
-<button onclick="window.history.back()">Go Back</button>
+    <button onclick="window.location.href='{% url 'home' %}'">Go Back</button>
 </body>
 </html>

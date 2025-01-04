@@ -51,7 +51,7 @@
         <p style="color: red;">This task was resolved after the SLA deadline.</p>
     {% endif %}
 
-    <button onclick="window.history.back()">Go Back</button>
+     <button onclick="window.location.href='{% url 'project_detail' task.project.id %}'">Go to Project</button>
 
     {% if subtasks %}
     <div class="kanban-board">

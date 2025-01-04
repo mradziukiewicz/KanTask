@@ -45,7 +45,7 @@
     <p>Customer: {{ project.customer.username }}</p>
     <p>Completion Rate: {{ completion_rate }}%</p>
 
-    <button onclick="window.history.back()">Go Back</button>
+    <button onclick="window.location.href='{% url 'home' %}'">Go Back</button>
 
     <form method="get" action="{% url 'project_detail' project.id %}">
         <input type="text" name="search" placeholder="Search tasks by ID or name" value="{{ request.GET.search }}">
