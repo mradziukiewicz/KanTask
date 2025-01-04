@@ -270,7 +270,17 @@ def edit_task(request, project_id, task_id):
 
 @login_required
 def home(request):
-    projects = Project.objects.all()
+    if request.user.is_superuser:
+        projects = Project.objects.all()
+    elif request.user.is_manager():
+        projects = Project.objects.filter(owner=request.user)
+    elif request.user.is_customer():
+        projects = Project.objects.filter(customer=request.user)
+    elif request.user.is_engineer():
+        projects = Project.objects.filter(tasks__assigned_user=request.user).distinct()
+    else:
+        projects = Project.objects.none()
+
     comments = Comment.objects.order_by('-created_at')[:5]
 
     context = {
