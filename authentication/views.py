@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.http import JsonResponse
-from .models import Project, Task,Comment
-from .forms import CommentForm, TaskForm
+from .models import Project, Task,Comment,Incident
+from .forms import CommentForm, TaskForm, IncidentReportForm
 from django.utils import timezone
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
@@ -273,3 +273,22 @@ def home(request):
         'comments': comments,
     }
     return render(request, 'home.html', context)
+
+@user_passes_test(lambda u: u.is_superuser or u.is_customer)
+def report_incident(request):
+    if request.method == 'POST':
+        form = IncidentReportForm(request.POST)
+        if form.is_valid():
+            incident = form.save(commit=False)
+            incident.created_by = request.user
+            incident.save()
+            return redirect('home')
+    else:
+        form = IncidentReportForm()
+
+    return render(request, 'report_incident.html', {'form': form})
+
+@user_passes_test(lambda u: u.is_superuser or u.is_manager())
+def reported_errors(request):
+    incidents = Incident.objects.all()
+    return render(request, 'reported_errors.html', {'incidents': incidents})

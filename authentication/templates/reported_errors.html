@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reported Errors</title>
+</head>
+<body>
+    <h1>Reported Errors</h1>
+    <ul>
+        {% for incident in incidents %}
+            <li>
+                <strong>{{ incident.title }}</strong><br>
+                {{ incident.description }}<br>
+                Project: {{ incident.project.name }}<br>
+                Reported by: {{ incident.created_by.username }}<br>
+                Created at: {{ incident.created_at }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

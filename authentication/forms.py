@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.admin.widgets import AdminDateWidget
 
-from .models import Comment, Task, User, Project
+from .models import Comment, Task, User, Project, Incident
 
 
 
@@ -40,3 +40,8 @@ class TaskForm(forms.ModelForm):
         if project:
             self.fields['parent_task'].queryset = Task.objects.filter(project=project)
         self.fields['assigned_user'].queryset = User.objects.filter(groups__name='Engineer')
+
+class IncidentReportForm(forms.ModelForm):
+    class Meta:
+        model = Incident
+        fields = ['title', 'description', 'project']
