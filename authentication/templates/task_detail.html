@@ -3,151 +3,260 @@
 <head>
     <title>{{ task.subject }}</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #343a40;
+        }
+
         .kanban-board {
             display: flex;
             justify-content: space-around;
+            padding: 20px;
+            gap: 20px;
         }
+
         .kanban-column {
             width: 30%;
-            background-color: #f4f4f4;
+            background-color: #ffffff;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .kanban-column h2 {
             text-align: center;
-        }
-        .kanban-card {
-            background-color: #fff;
+            background-color: #007bff;
+            color: white;
             padding: 10px;
-            margin: 10px 0;
             border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 0 -10px 10px;
         }
+
+        .kanban-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .kanban-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
         .subtask {
-            margin-left: 20px;
-            font-style: italic;
-            color: gray;
+            background-color: #e9ecef;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         .status-buttons {
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
-        .status-buttons button {
-            margin-right: 10px;
+
+        .status-buttons form {
+            width: 100%;
+            text-align: center;
         }
-        .priority-low { color: green; }
-        .priority-medium { color: orange; }
-        .priority-high { color: red; }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            max-width: 300px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .priority-low {
+            color: green;
+        }
+
+        .priority-medium {
+            color: orange;
+        }
+
+        .priority-high {
+            color: red;
+        }
+
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+
+        .form-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-section form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-section textarea, .form-section input {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <h1>{{ task.subject }}</h1>
-    <p>Task ID: {{ task.id }}</p>
-    <p>{{ task.description }}</p>
-    <p>Status: {{ task.status }}</p>
-    <p class="priority-{{ task.priority|lower }}">Priority: {{ task.priority }}</p>
-    <p>Assigned User: {{ task.assigned_user.username }}</p>
-    <p>SLA Deadline: {{ task.sla_deadline }}</p>
+    <p style="text-align: center;">Task ID: {{ task.id }}</p>
+    <p style="text-align: center;">{{ task.description }}</p>
+    <p style="text-align: center;">Status: {{ task.status }}</p>
+    <p style="text-align: center;" class="priority-{{ task.priority|lower }}">Priority: {{ task.priority }}</p>
+    <p style="text-align: center;">Assigned User: {{ task.assigned_user.username }}</p>
+    <p style="text-align: center;">SLA Deadline: {{ task.sla_deadline }}</p>
     {% if task.resolved_after_deadline %}
-        <p style="color: red;">This task was resolved after the SLA deadline.</p>
+        <p style="color: red; text-align: center;">This task was resolved after the SLA deadline.</p>
     {% endif %}
 
-     <button onclick="window.location.href='{% url 'project_detail' task.project.id %}'">Go to Project</button>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <button onclick="window.location.href='{% url 'project_detail' task.project.id %}'">Go to Project</button>
+    </div>
 
     {% if subtasks %}
-    <div class="kanban-board">
-        <div class="kanban-column">
-            <h2>To Do</h2>
-            {% for subtask in subtasks %}
-                {% if subtask.status == 'Pending' %}
-                    <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
-                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
-                        <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
-                        <a href="{% url 'update_task_status' subtask.id 'In Progress' %}">Move to In Progress</a>
-                    </div>
-                {% endif %}
-            {% endfor %}
+        <div class="kanban-board">
+            <div class="kanban-column">
+                <h2>To Do</h2>
+                {% for subtask in subtasks %}
+                    {% if subtask.status == 'Pending' %}
+                        <div class="kanban-card subtask">
+                            <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                            <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                            <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
+                            <a href="{% url 'update_task_status' subtask.id 'In Progress' %}" style="color: #007bff;">Move to In Progress</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="kanban-column">
+                <h2>In Progress</h2>
+                {% for subtask in subtasks %}
+                    {% if subtask.status == 'In Progress' %}
+                        <div class="kanban-card subtask">
+                            <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                            <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                            <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
+                            <a href="{% url 'update_task_status' subtask.id 'Completed' %}" style="color: #007bff;">Move to Completed</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="kanban-column">
+                <h2>Completed</h2>
+                {% for subtask in subtasks %}
+                    {% if subtask.status == 'Completed' %}
+                        <div class="kanban-card subtask">
+                            <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
+                            <p>Assigned User: {{ subtask.assigned_user.username }}</p>
+                            <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
-        <div class="kanban-column">
-            <h2>In Progress</h2>
-            {% for subtask in subtasks %}
-                {% if subtask.status == 'In Progress' %}
-                    <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
-                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
-                        <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
-                        <a href="{% url 'update_task_status' subtask.id 'Completed' %}">Move to Completed</a>
-                    </div>
-                {% endif %}
+    {% endif %}
+
+    <div class="form-section">
+        <h2>Comments</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add Comment</button>
+        </form>
+        <table>
+            <tr>
+                <th>Author</th>
+                <th>Date</th>
+                <th>Content</th>
+            </tr>
+            {% for comment in comments %}
+            <tr>
+                <td>{{ comment.author }}</td>
+                <td>{{ comment.created_at }}</td>
+                <td>{{ comment.content }}</td>
+            </tr>
             {% endfor %}
-        </div>
-        <div class="kanban-column">
-            <h2>Completed</h2>
-            {% for subtask in subtasks %}
-                {% if subtask.status == 'Completed' %}
-                    <div class="kanban-card subtask">
-                        <p><a href="{% url 'task_detail' subtask.id %}">{{ subtask.subject }}</a> (ID: {{ subtask.id }})</p>
-                        <p>Assigned User: {{ subtask.assigned_user.username }}</p>
-                        <p class="priority-{{ subtask.priority|lower }}">Priority: {{ subtask.priority }}</p>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+        </table>
     </div>
-    {% endif %}
-
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <h2>Comments</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Comment</button>
-    </form>
-    <table>
-        <tr>
-            <th>Author</th>
-            <th>Date</th>
-            <th>Content</th>
-        </tr>
-        {% for comment in comments %}
-        <tr>
-            <td>{{ comment.author }}</td>
-            <td>{{ comment.created_at }}</td>
-            <td>{{ comment.content }}</td>
-        </tr>
-        {% endfor %}
-    </table>
 
     {% if task.status == 'Completed' %}
-        <h2>Solution</h2>
-        <p>{{ task.solution }}</p>
-        <p>Time Spent: {{ task.time_spent }} hours</p>
+        <div class="form-section">
+            <h2>Solution</h2>
+            <p>{{ task.solution }}</p>
+            <p>Time Spent: {{ task.time_spent }} hours</p>
+        </div>
     {% endif %}
 
     {% if not subtasks %}
-    <div class="status-buttons">
-        <form method="post" action="{% url 'update_task_status' task.id 'Pending' %}">
-            {% csrf_token %}
-            <button type="submit">To Do</button>
-        </form>
-        <form method="post" action="{% url 'update_task_status' task.id 'In Progress' %}">
-            {% csrf_token %}
-            <button type="submit">In Progress</button>
-        </form>
-        <form method="post" action="{% url 'update_task_status' task.id 'Completed' %}">
-            {% csrf_token %}
-            <textarea name="solution" placeholder="Enter solution here..."></textarea>
-            <input type="number" step="0.01" name="time_spent" placeholder="Time spent (hours)">
-            <button type="submit">Done</button>
-        </form>
-    </div>
+        <div class="form-section">
+            <h2>Update Task Status</h2>
+            <div class="status-buttons">
+                <form method="post" action="{% url 'update_task_status' task.id 'Pending' %}">
+                    {% csrf_token %}
+                    <button type="submit">To Do</button>
+                </form>
+                <form method="post" action="{% url 'update_task_status' task.id 'In Progress' %}">
+                    {% csrf_token %}
+                    <button type="submit">In Progress</button>
+                </form>
+                <form method="post" action="{% url 'update_task_status' task.id 'Completed' %}">
+                    {% csrf_token %}
+                    <textarea name="solution" placeholder="Enter solution here..."></textarea>
+                    <input type="number" step="0.01" name="time_spent" placeholder="Time spent (hours)">
+                    <button type="submit">Done</button>
+                </form>
+            </div>
+        </div>
     {% endif %}
 </body>
 </html>

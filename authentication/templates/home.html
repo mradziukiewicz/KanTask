@@ -1,44 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <style>
-        .priority-low { color: green; }
-        .priority-medium { color: orange; }
-        .priority-high { color: red; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #333;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 0.5rem 0;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #333;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <h1>Welcome, {{ user.username }}</h1>
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Sign Out</button>
-    </form>
+    <header>
+        <h1>Welcome, {{ user.username }}</h1>
+    </header>
 
-    <h2>Projects</h2>
-    <ul>
-        {% for project in projects %}
-            <li><a href="{% url 'project_detail' project.id %}">{{ project.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <nav>
+        {% if user.is_superuser or user.is_customer %}
+            <a href="{% url 'report_incident' %}">Report Incident</a>
+        {% endif %}
+        {% if user.is_superuser or user.is_manager %}
+            <a href="{% url 'reported_errors' %}">View Reported Errors</a>
+        {% endif %}
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button class="button" type="submit">Sign Out</button>
+        </form>
+    </nav>
 
-    <h2>Last Comments</h2>
-    <ul>
-        {% for comment in comments %}
-            <li>
-                {{ comment.content }} -
-                <a href="{% url 'task_detail' comment.task.id %}">Task: {{ comment.task.subject }}</a> -
-                {{ comment.created_at }}
-            </li>
-        {% endfor %}
-    </ul>
+    <main>
+        <section id="projects">
+            <h2>Projects</h2>
+            <ul class="grid">
+                {% for project in projects %}
+                    <li class="card"><a href="{% url 'project_detail' project.id %}">{{ project.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
 
-    {% if user.is_superuser or user.is_customer %}
-        <a href="{% url 'report_incident' %}">Report Incident</a>
-    {% endif %}
+        <section id="comments">
+            <h2>Last Comments</h2>
+            <ul>
+                {% for comment in comments %}
+                    <li>
+                        {{ comment.content }} -
+                        <a href="{% url 'task_detail' comment.task.id %}">Task: {{ comment.task.subject }}</a> -
+                        {{ comment.created_at }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
 
-    {% if user.is_superuser or user.is_manager %}
-        <a href="{% url 'reported_errors' %}">View Reported Errors</a>
-    {% endif %}
+    <footer>
+        <p>Helpdesk System &copy; 2025</p>
+    </footer>
 </body>
 </html>
