@@ -142,8 +142,6 @@ def kanban_board(request):
     return render(request, 'kanban_board.html', {'tasks': tasks})
 
 
-# authentication/views.py
-
 def update_task_status(request, task_id, status):
     task = get_object_or_404(Task, id=task_id)
 
@@ -188,16 +186,18 @@ def update_task_status(request, task_id, status):
 
     task.save()
 
-    # Update parent task status if necessary
-    if task.parent_task:
-        parent_task = task.parent_task
-        if status == 'In Progress':
+    # Update parent tasks recursively
+    def update_parent_status(parent_task):
+        if parent_task.subtasks.filter(status__in=['Pending', 'In Progress']).exists():
             parent_task.status = 'In Progress'
-        elif status == 'Completed' and all(subtask.status == 'Completed' for subtask in parent_task.subtasks.all()):
-            parent_task.status = 'Completed'
         else:
-            parent_task.status = 'In Progress'
+            parent_task.status = 'Completed'
         parent_task.save()
+        if parent_task.parent_task:
+            update_parent_status(parent_task.parent_task)
+
+    if task.parent_task:
+        update_parent_status(task.parent_task)
 
     # Add auto-comment
     comment_content = f'Task status changed to {status} by {request.user.username}.'
