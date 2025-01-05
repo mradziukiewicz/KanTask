@@ -9,5 +9,3 @@ venv\Scripts\activate
 pip install -r requirements.txt  
 python manage.py migrate  
 python manage.py runserver  
-
-# Dodatkowo wymagane połączenie do bazy danych 31.183.16.15, zapytaj o dostęp jeśli nie masz ;)
