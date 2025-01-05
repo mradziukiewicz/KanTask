@@ -50,9 +50,6 @@ def login_view(request):
             return JsonResponse({'success': False, 'error': 'Invalid credentials'})
     return render(request, 'login.html')
 
-# authentication/views.py
-
-# authentication/views.py
 
 def project_list(request):
     if request.user.is_superuser:
@@ -69,15 +66,11 @@ def project_list(request):
 
 
 
-# authentication/views.py
-
-# authentication/views.py
-
 
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     if not is_superuser_or_owner(request.user, project) and request.user != project.customer and not project.tasks.filter(assigned_user=request.user).exists():
-        return redirect('project_list')
+        return redirect('home')
 
     tasks = Task.objects.filter(project=project, parent_task__isnull=True)
     subtasks = Task.objects.filter(project=project, parent_task__isnull=False)
@@ -93,11 +86,13 @@ def project_detail(request, project_id):
         subtasks = subtasks.filter(
             Q(subject__icontains=search_query) | Q(id__icontains=search_query)
         )
+        parent_task_ids = subtasks.values_list('parent_task_id', flat=True)
+        tasks = tasks | Task.objects.filter(id__in=parent_task_ids)
 
     return render(request, 'project_detail.html', {
         'project': project,
-        'tasks': tasks,
-        'subtasks': subtasks,
+        'tasks': tasks.distinct(),
+        'subtasks': subtasks.distinct(),
         'completion_rate': completion_rate,
     })
 
